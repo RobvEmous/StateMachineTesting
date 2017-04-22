@@ -87,14 +87,15 @@ MAYBE TODO
 ## Results
 After setting up everything, the State Learner will try to build a state machine of the choosen TLS server implementation. This results in a `.dot` file and `.pdf` showing the hypotheses and final state machines. 
 The visualizations of these graphs are very large due to the large number of input and output types (the alphabet). Therefore, we merged equivalent state changes and labeled them 'Other' or 'All'.
-We included a state machine graph visualization for ea number of TLS server implementations. (TODO)
+We included a state machine graph visualization for a number of specific TLS server implementations.
 
 ### OpenSSL 1.0.2
 ![OpenSSL 1.0.2 state machine diagram](/graphs/OpenSSL_1.0.2.png?raw=true "OpenSSL 1.0.2 state machine diagram")
 TODO Some explanation about the states of the graph 
 
 ### OpenSSL 1.1.0e
-TODO
+![OpenSSL 1.1.0e state machine diagram](/graphs/OpenSSL_1.1.0e.png?raw=true "OpenSSL 1.1.0e state machine diagram")
+TODO Some explanation about the states of the graph 
 
 ### BearSSL 0.4
 TODO

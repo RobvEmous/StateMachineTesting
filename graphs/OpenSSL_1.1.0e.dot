@@ -1,0 +1,36 @@
+digraph g {
+graph [ dpi = 300 ];
+__start0 [label="" shape="none"];
+
+	s0 [shape="circle" label="0"];
+	s1 [shape="circle" label="1"];
+	s2 [shape="circle" label="2"];
+	s3 [shape="circle" label="3"];
+	s4 [shape="circle" label="4"];
+	s5 [shape="circle" label="5"];
+	
+	edge[color=green weight=2]
+	s0 -> s1:w [label=<ClientHello(DHE,RSA)<BR/> ServerHello / Certificate / HelloDone>];
+	s1 -> s3 [label=<ClientKeyExchange<BR/> Empty>];
+	s3 -> s4 [label=<ChangeCipherSpec<BR/> Empty>];
+	s4 -> s5 [label=<Finished<BR/> ChangeCipherSpec /<BR/> Finished>];
+	s5 -> s2 [label=<ApplicationData<BR/> ApplicationData /<BR/> ConnectionClosed>];
+	__start0 -> s0;
+	
+	edge[color=black]
+	s0 -> s2:w [label=<Other<BR/> Alert (Unexpected message) /<BR/> ConnectionClosed>];
+	
+	s1 -> s2 [label=<Other<BR/> Alert (Unexpected message) /<BR/> ConnectionClosed>];
+	
+	s2 -> s2 [label=<All<BR/> ConnectionClosed>];
+	
+	s3 -> s2 [label=<Other<BR/> Alert (Unexpected message) /<BR/> ConnectionClosed>];
+		
+	s4 -> s2 [label=<Other<BR/> Alert (Unexpected message) /<BR/> ConnectionClosed>];
+
+	s5:s -> s2 [label=<Other<BR/> Alert (Unexpected message) /<BR/> ConnectionClosed>];
+	s5 -> s5 [label=<ApplicationDataEmpty<BR/> Empty>];
+	s5:s -> s2 [label=<ClientHello(DHE,RSA)<BR/> Alert (Handshake failure) /<BR/> ConnectionClosed> fontcolor=orange];	
+
+}
+
