@@ -90,7 +90,7 @@ The visualizations of these graphs are very large due to the large number of inp
 We included a state machine graph visualization for ea number of TLS server implementations. (TODO)
 
 ### OpenSSL 1.0.2
-![OpenSSL 1.0.2 state machine diagram](/graphs/OpenSSL_1.0.2.pdf?raw=true "OpenSSL 1.0.2 state machine diagram")
+![OpenSSL 1.0.2 state machine diagram](/graphs/OpenSSL_1.0.2.png?raw=true "OpenSSL 1.0.2 state machine diagram")
 TODO Some explanation about the states of the graph 
 
 ### OpenSSL 1.1.0e
