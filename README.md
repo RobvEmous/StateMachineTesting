@@ -2,7 +2,7 @@
 
 This repository contains a simple setup for learning Mealy machine models of different TLS implementations using the L* algorithm.
 It makes use of [LearnLib](http://learnlib.de/), a library for active model learning. On top of that, we use the [StateLearner](https://github.com/jderuiter/statelearner) software made by Joeri de Ruiter.
-After the install ation and setup, we will show how to run different TLS servers locally and how to test these implementations.
+After the installation and setup, we will show how to run different TLS servers locally and how to test these implementations.
 
 ## Installation
 
@@ -23,21 +23,21 @@ $ sudo apt-get install graphviz
 ```
   * For Windows users, download it from the [website](http://graphviz.org/download_windows.php). After installation, make sure to add a PATH environment variable pointing to the install location: `C:\Program Files (x86)\Graphviz2.38\bin`.
 
-* Clone the [StateLearner](https://github.com/jderuiter/statelearner) repo and either follow the build instructions on that repo, or use an IDE like Eclipse:
+* Clone the [StateLearner](https://github.com/jderuiter/statelearner) repo and either follow the build instructions of that repo, or use an IDE like Eclipse:
   * `Import > Existing Maven Projects > [location of the StateLearner] > Finish`
   * `Run As > Maven Build`
-  * `Run As > Maven Install (requires the use of a __JDK__ instead of a JRE)`
+  * `Run As > Maven Install` (requires the use of a __JDK__ instead of a JRE)
 
 
 ## Setup
 You will first setup the state learner and then you can choose (one of) the different TLS implementation servers to use the learner on.
 
-* Locate the example properties file in `StateLearner\examples\configuration` and overwrite it with the provided properties file. You probably want to change a number of lines:
+* Locate the example properties file in `StateLearner\examples\configuration` and overwrite it with the properties file of this repo. You probably want to change a number of lines:
   * keystore_filename (line 5): The path to the example keystore
   * output_dir (line 10): The output folder name
   * port (line 64): The port the current TLS implementation-under-test listens on
   
-## Run the tester
+## Run the State Learner
 This can be done using the command line, or via an IDE like Eclipse:
   * `Run As > Run Configurations > Arguments (tab) > Program arguments (field) = examples/configuration/config.properties`
   * `Run As > Run Configurations > Main class (field) = nl.cypherpunk.statelearner.Learner`
@@ -50,7 +50,7 @@ It will not work yet, because there is no TLS server to connect to. You can setu
 ### OpenSSL (Not for Win users)
 
 * [Download](https://www.openssl.org/source/old/) the required OpenSSL version. 
-* Untar, build and install the server (requires root access):
+* Untar, build and install the server (some trouwleshooting [tips](http://stackoverflow.com/questions/16488629/undefined-references-when-building-openssl)):
 ```
 $ tar -xf openssl-x.x.x.tar.gz
 $ cd openssl-x.x.x && 
@@ -65,5 +65,6 @@ $ openssl s_server -key key.pem -cert cert.pem -accept 10000 -www
 ```
 * You can test it by going to https://localhost:10000
 
-
+## Notes
+* The 
 
