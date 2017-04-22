@@ -5,3 +5,5 @@ It makes use of LearnLib (http://learnlib.de/), a library for active model learn
 
 ## Setup
 
+http://github.com - automatic!
+[GitHub](http://github.com)
