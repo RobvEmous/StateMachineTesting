@@ -8,7 +8,7 @@ After the installation and setup, we will show how to run different TLS servers 
 
 Download and install the following before starting:
 * Java SDK 1.8
-  * For Linux users, install using apt-get or another package manager.
+  * For Linux users, install using apt-get or another package manager:
 ```
 $ sudo add-apt-repository ppa:webupd8team/java
 $ sudo apt-get update
@@ -17,7 +17,7 @@ $ sudo apt-get install oracle-java8-installer
   * For Windows users, download it from the Oracle [website](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 
 * Graphviz, which contains the `dot` utility for visualizing the learned models, you need the command line tools.
-  * For Linux users, install using apt-get or another package manager.
+  * For Linux users, install using apt-get or another package manager:
 ```
 $ sudo apt-get install graphviz
 ```
@@ -43,18 +43,18 @@ This can be done using the command line, or via an IDE like Eclipse:
   * `Run As > Run Configurations > Main class (field) = nl.cypherpunk.statelearner.Learner`
   * `Run As > Java Application`
   
-It will not work yet, because there is no TLS server to connect to. You can setup one or more TLS servers using the following steps. As these servers often only work on Linux, Windows users should set them up in a virtual machine and forward the required TCP ports to the Windows host. For VBox users, port forwarding can be done like [this](http://stackoverflow.com/questions/9537751/virtualbox-port-forward-from-guest-to-host).
+It will not work yet, because there is no TLS server to connect to. You can setup one or more TLS servers using the following steps. **As these servers often only work on Linux**, Windows users should set them up in a virtual machine and forward the required TCP ports to the Windows host. For VBox users, port forwarding can be done like [this](http://stackoverflow.com/questions/9537751/virtualbox-port-forward-from-guest-to-host).
   
 ### BearSSL (Not for Win users)
 * Clone the [BearSSL](https://github.com/nogoegst/bearssl.git) repo and follow the build instructions.
-* Go to `bearssl/samples`, compile and run the demo server on port 10000 (for instance).
+* Go to `bearssl/samples`, compile and run the demo server on port 10000 (for instance):
 ```
 $ cd bearssl/samples
 $ gcc server_basic.c -I../inc/ -L../build/ -lbearssl -o server_basic
 $ ./server_basic 10000
 ```
 
-### OpenSSL (Not for Win users)
+### OpenSSL
 
 * [Download](https://www.openssl.org/source/old/) the required OpenSSL version. 
 * Untar, build and install the server (some troubleshooting [tips](http://stackoverflow.com/questions/16488629/undefined-references-when-building-openssl)):
@@ -65,29 +65,39 @@ $ su -i
 $ make clean && ./config zlib 
 $ make && make install
 ```
-* Finally, setup and start the server on port 10000 (for instance).
+* Finally, setup and start the server on port 10000 (for instance):
 ```
 $ openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365
 $ openssl s_server -key key.pem -cert cert.pem -accept 10000 -www
 ```
 * You can test it by going to https://localhost:10000
 
-### LibreTLS (Not for Win users)
+### LibreTLS
 TODO
 
-### GnuTLS (Not for Win users)
+### GnuTLS
 TODO
 
-### WolfSSL (Not for Win users)
+### WolfSSL
 MAYBE TODO
 
-### BoringSSL (Not for Win users)
+### BoringSSL
 MAYBE TODO
 
 ## Results
 After setting up everything, the State Learner will try to build a state machine of the choosen TLS server implementation. This results in a `.dot` file and `.pdf` showing the hypotheses and final state machines. 
 The visualizations of these graphs are very large due to the large number of input and output types (the alphabet). Therefore, we merged equivalent state changes and labeled them 'Other' or 'All'.
-We included a state machine graph visualization for every listed TLS server implementation. (TODO)
+We included a state machine graph visualization for ea number of TLS server implementations. (TODO)
+
+### OpenSSL 1.0.2
+![OpenSSL 1.0.2 state machine diagram](/graphs/OpenSSL_1.0.2.pdf?raw=true "OpenSSL 1.0.2 state machine diagram")
+TODO Some explanation about the states of the graph 
+
+### OpenSSL 1.1.0e
+TODO
+
+### BearSSL 0.4
+TODO
 
 ## Notes
 * Windows 10 and Ubuntu 14.04 are used for this setup.
