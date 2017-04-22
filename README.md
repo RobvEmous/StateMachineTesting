@@ -14,7 +14,7 @@ $ sudo add-apt-repository ppa:webupd8team/java
 $ sudo apt-get update
 $ sudo apt-get install oracle-java8-installer
 ```
-* For Windows users, download it from the Oracle [website](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+ * For Windows users, download it from the Oracle [website](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 
 * Graphviz, which contains the `dot` utility for visualizing the learned models, you need the command line tools.
   * For Linux users, install using apt-get or another package manager.
@@ -22,7 +22,7 @@ $ sudo apt-get install oracle-java8-installer
 $ apt-get install graphviz
 ```
   * For Windows users, download it from the [website](http://graphviz.org/download_windows.php). After installation, make sure to add a PATH environment variable pointing to the install location: `C:\Program Files (x86)\Graphviz2.38\bin`.
-```
+
 * Clone the [StateLearner](https://github.com/jderuiter/statelearner) repo and follow the build instructions.
 
 ## Setup
@@ -37,10 +37,16 @@ $ apt-get install graphviz
 ```
 $ tar -xf openssl-x.x.x.tar.gz
 ```
-* Build and install it using (requires root access):
+* Build and install the server (requires root access):
 ```
 $ cd openssl-x.x.x && 
 $ su -i 
 $ make clean && ./config zlib 
 $ make && make install
 ```
+* Finally, setup and start the server on port 10000.
+```
+& openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365
+$ openssl s_server -key key.pem -cert cert.pem -accept 10000 -www
+```
+* You can test it by going to https://localhost:10000
