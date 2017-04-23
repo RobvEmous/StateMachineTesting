@@ -49,12 +49,11 @@ It will not work yet, because there is no TLS server to connect to. You can setu
 * You can test the TLS servers by going to https://localhost:10000. After ignoring the self-signed-certificate warnings, you should see a test page in most cases.
 
 ### OpenSSL
-
 * [Download](https://www.openssl.org/source/old/) the required OpenSSL version. 
 * Untar, build and install the server (some troubleshooting [tips](http://stackoverflow.com/questions/16488629/undefined-references-when-building-openssl)):
 ```
 $ tar -xf openssl-x.x.x.tar.gz
-$ cd openssl-x.x.x && 
+$ cd openssl-x.x.x
 $ su -i 
 $ make clean && ./config zlib 
 $ make && make install
@@ -77,7 +76,32 @@ $ ./server_basic 10000
 ```
 
 ### GnuTLS
-TODO
+* Install the required libraries:
+  * [libnettle](http://www.lysator.liu.se/~nisse/nettle/)
+```
+$ sudo apt-get instal -y nettle-dev nettle-bin
+```
+  * [libgmp](https://gmplib.org/)
+* Either install the optional libraries, or exclude them during the installation of GnuTLS (using the argument --without-[library name]):
+  * [libtasn1](https://www.gnu.org/software/libtasn1/)
+  * [p11-kit](https://p11-glue.freedesktop.org/p11-kit.html)
+* [Download](http://www.gnutls.org/download.html) the required GnuTLS version.
+* Untar, build and install the server:
+```
+$ tar -xf gnutls-x.x.x.tar.gz
+$ cd gnutls-x.x.x
+$ su -i
+$ ./configure && make && make install
+```
+* Create server certificates and start the server on port 10000 (for instance) (some troubleshooting [tips](https://www.gnutls.org/manual/html_node/gnutls_002dserv-Invocation.html)):
+```
+$ certtool --generate-privkey > x509-ca-key.pem
+$ echo 'cn = GnuTLS test CA' > ca.tmpl
+$ echo 'ca' >> ca.tmpl
+$ echo 'cert_signing_key' >> ca.tmpl
+$ certtool --generate-self-signed --load-privkey x509-ca-key.pem --template ca.tmpl --outfile x509-ca.pem
+$ gnutls-serv -p 10000 --http --x509cafile x509-ca.pem --x509keyfile x509-server-key.pem --x509certfile x509-server.pem
+```
 
 ### LibreTLS / WolfSSL / BoringSSL
 MAYBE TODO
