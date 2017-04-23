@@ -1,0 +1,39 @@
+digraph g {
+graph [ dpi = 300 ];
+__start0 [label="" shape="none"];
+
+	s0 [shape="circle" label="0"];
+	s1 [shape="circle" label="1"];
+	s2 [shape="circle" label="2"];
+	s3 [shape="circle" label="3"];
+	s4 [shape="circle" label="4"];
+	s5 [shape="circle" label="5"];
+	
+	edge[color=green weight=2]
+	s0:e -> s1:w [label=<ClientHello(RSA)<BR/> ServerHello / Certificate / HelloDone>];
+	s1:e -> s3:w [label=<ClientKeyExchange<BR/> Empty>];
+	s3:e -> s4:w [label=<ChangeCipherSpec<BR/> Empty>];
+	s4:e -> s5 [label=<Finished<BR/> ChangeCipherSpec /<BR/> Finished>];
+	s5 -> s2 [label=<ApplicationData<BR/> ApplicationData /<BR/> Warning (Close Notify)> fontcolor=orange];
+	__start0 -> s0; 
+	
+	edge[color=black]
+	s0:w -> s2 [label=<ClientHelloDHE<BR/> Alert (Handshake failure) /<BR/> ConnectionClosed> fontcolor=orange];
+	s0:w -> s2 [label=<Other<BR/> ConnectionClosed>];
+	s0 -> s0 [label=<ApplicationDataEmpty<BR/> Empty>];
+	
+	s1:s -> s2 [label=<Other<BR/> ConnectionClosed>];
+	s1 -> s1 [label=<ApplicationDataEmpty<BR/> Empty>];
+
+	s2 -> s2 [label=<All<BR/> ConnectionClosed>];
+	
+	s3 -> s3 [label=<ApplicationDataEmpty<BR/> Empty>];
+	s3 -> s2 [label=<Other<BR/> ConnectionClosed>];
+	
+	s4 -> s4 [label=<ApplicationDataEmpty<BR/> Empty>];
+	s4 -> s2 [label=<Other<BR/> ConnectionClosed>];
+	
+    s5 -> s5 [label=<ApplicationDataEmpty<BR/> Empty>];
+	s5:s -> s2 [label=<Other<BR/> ConnectionClosed>];
+
+}

@@ -64,7 +64,7 @@ $ openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365
 $ openssl s_server -key key.pem -cert cert.pem -accept 10000 -www
 ```
 
-### BearSSL (Not for Win users)
+### BearSSL
 * Clone the [BearSSL](https://github.com/nogoegst/bearssl.git) repo and follow the build instructions. At the end, the file `/build/libbearssl.so` should have been generated.
 * Compile, export the library and run the demo server on port 10000 (for instance):
 ```
@@ -77,11 +77,11 @@ $ ./server_basic 10000
 
 ### GnuTLS
 * Install the required libraries:
+  * [libgmp](https://gmplib.org/)
   * [libnettle](http://www.lysator.liu.se/~nisse/nettle/)
 ```
 $ sudo apt-get instal -y nettle-dev nettle-bin
 ```
-  * [libgmp](https://gmplib.org/)
 * Either install the optional libraries, or exclude them during the installation of GnuTLS (using the argument --without-[library name]):
   * [libtasn1](https://www.gnu.org/software/libtasn1/)
   * [p11-kit](https://p11-glue.freedesktop.org/p11-kit.html)
@@ -125,23 +125,33 @@ Learning the state machine took about the same time as the research: 6 minutes. 
 * The heartbeat requests are ignored in every state. This might be the solution of the software to the Heartbleed vulnerability.
 
 ### OpenSSL 1.1.0e
+This is the newest stable OpenSSL version which we will compare with the older version above. Below, the generated state machine is shown:
 ![OpenSSL 1.1.0e state machine diagram](/graphs/OpenSSL_1.1.0e.png?raw=true "OpenSSL 1.1.0e state machine diagram")
-As you can see, the state machine includes 6 states. State 0 to 4 are TLS handshake states, state 5 is the authenticated state and state 2 is the connection closed state. Learning took only about 3 minutes. Some interesting findings compared to OpenSSL 1.0.2 are:
+As you can see, the state machine now includes 6 states instead of 7. State 0 to 4 are TLS handshake states, state 5 is the authenticated state and state 2 is the connection closed state. 
+Learning took about 8 minutes. Some interesting findings compared to OpenSSL 1.0.2 are:
 * In state 0, every unexpected message will now result in the appropriate alert 'Unexpected Message'.
 * There is no longer a state 6. This seems to prove that this state was redundant in the older OpenSSL implementation.
 * In state 5, when a ClientHello(DHE,RSA) is sent, the server still responds with an alert 'Handshake Failure' instead of an alert 'Unexpected Message'.
 * Now, the server only accepts empty ApplicationData in the authenticated state. This shows that the acceptance of this messages in the older OpenSSL implementation was strange behavior.
 
 ### BearSSL 0.4
-This implementation is relatively new and unknown as it is only 'Alpha' state software. That is why it is not tested in the research and proved to be quite difficult to get accurate results from which we will discuss later. It is interesting, because on its website it promises to be a very simple and secure implementation of TLS. Below, the generated state machine is shown:
+This implementation is relatively new and unknown as it is only 'Alpha' state software. That is why it is not tested in the research and proved to be quite difficult to get accurate results from which we will discuss later. 
+It is interesting, because on its website it promises to be a very simple and secure implementation of TLS. Below, the generated state machine is shown:
 ![BearSSL 0.4 state machine diagram](/graphs/BearSSL_0.4.png?raw=true "BearSSL 0.4 state machine diagram")
-As you can see, the graph contains [x] states
+As you can see, the graph contains 6 states. The shown test took about 18 minutes, but often it was still running after 5 hours, we will explain later later why this was the case. Some interesting findings are:
+TODO
 
-### GnuTLS x.x
+### GnuTLS 3.5.9
+This is the newest stable version of GnuTLS. The research also looked into GnuTLS, but these were much older versions (3.3.8 and 3.3.12). We will compare the results to these older versions. Below, the generated state machine is shown:
+![GnuTLS 3.5.9 state machine diagram](/graphs/GnuTLS_3.5.9.png?raw=true "GnuTLS 3.5.9 state machine diagram")
+As you can see, the graph contains 6 states. The shown test took about 7 minutes, which was much shorter than that of versions 3.3.8 (45 min) and about the same as version 3.3.12 (9 minutes). Some interesting findings are:
 TODO
 
 ### LibreTLS / WolfSSL / BoringSSL
 MAYBE TODO
+
+### Conclusions
+TODO
 
 ## Notes
 * Windows 10 and Ubuntu 14.04 are used for this setup.
