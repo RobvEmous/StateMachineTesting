@@ -102,13 +102,18 @@ As you can see, the state machine includes 7 states, just like in the research. 
 Learning the state machine took about the same time as the research: 6 minutes. Some interesting findings include:
 * In state 0, when a ChangeCipherSpec, ApplicationData(Empty) or HeartbeatMessage(Empty) is sent, the connection will always be closed without responding with the appropriate alert 'Unexpected Message'.
 * In state 5, when a ChangeCipherSpec is sent, the server goes the seemingly redundant state 6 after which every message yields the alert 'Bad Record MAC' and server will go to state 2. This could indicate that in state 6, the server does not use the same MAC key/scheme as the client.  
-* In state 5, when a ClientHello(DHE,RSA) is sent, the server returns the 'Handshake Failure' alert which would indicate that the sender was unable to negotiate an acceptable set of security parameters given the options available, but this is not the case: it is an 'Unexpected Message'.
+* In state 5, when a ClientHello(DHE,RSA) is sent, the server returns the 'Handshake Failure' alert which would indicate that the sender was unable to negotiate an acceptable set of security parameters given the options available, but this is not the case: it is an alert 'Unexpected Message'.
 * In state 1 to 5, the server happily accepts empty data packets, but except for when in the authenticated state 5, this should lead to state 2.
 * The heartbeat requests are ignored in every state. This might be the solution of the software to the Heartbleed vulnerability.
 
 ### OpenSSL 1.1.0e
 ![OpenSSL 1.1.0e state machine diagram](/graphs/OpenSSL_1.1.0e.png?raw=true "OpenSSL 1.1.0e state machine diagram")
-As you can see, the state machine includes 6 states. State 0 to 4 are TLS handshake states, state 5 is the authenticated state and state 2 is the connection closed state. 
+As you can see, the state machine includes 6 states. State 0 to 4 are TLS handshake states, state 5 is the authenticated state and state 2 is the connection closed state. Learning took only about 3 minutes. Some interesting findings compared to OpenSSL 1.0.2 are:
+* In state 0, every unexpected message will result in the appropriate alert 'Unexpected Message'.
+* There is no longer a state 6. This seems to prove that this state was redundant in the older OpenSSL implementation.
+* In state 5, when a ClientHello(DHE,RSA) is sent, the server still responds with an alert 'Handshake Failure' instead of an alert 'Unexpected Message'.
+* Now, the server only accepts empty ApplicationData in the authenticated state. This shows that the acceptance of this messages in the older OpenSSL implementation was strange behavior.
+
 
 ### BearSSL 0.4
 This implementation is relatively new and unknown as it is only 'Alpha' state software. That is why it is not tested in the research and proved to be quite difficult to get accurate results from which we will discuss later. It is interesting, because on its website it promises to be a very simple and secure implementation of TLS. Below, the generated state machine is shown:
