@@ -147,12 +147,12 @@ As you can see, the graph contains 6 states, which is the right amount. The show
 This is the newest stable version of GnuTLS. The research also looked into GnuTLS, but these were older versions (3.3.8 and 3.3.12). We will compare the results to these older versions. Below, the generated state machine is shown:
 ![GnuTLS 3.5.9 state machine diagram](/graphs/GnuTLS_3.5.9.png?raw=true "GnuTLS 3.5.9 state machine diagram")
 As you can see, the graph contains 6 states, which is the right amount. The shown test took about 7 minutes, which was much shorter than that of version 3.3.8 (45 min) and similar to that of version 3.3.12 (9 minutes). Some interesting findings are:
-* In state 3, sending a ClientHello(DHE,RSA) message will result in an alert 'Internal Error' on the server side. This should never happen and is probably an implementation bug.   
+* In state 3, sending a ClientHello(DHE,RSA) message will result in an alert 'Internal Error' on the server side. This should never happen and is probably an implementation bug.   
 * In state 5, when a ClientHello(DHE,RSA) is sent, just like the two OpenSSL versions do, the server responds with an alert 'Handshake Failure' instead of an alert 'Unexpected Message'.
 * In state 0 to 4, the server accepts empty data packets, similar like OpenSSL 1.0.2 and BearSSL, while this should lead to state 2.
 
 ### Conclusions
-We tested four TLS implementations. OpenSSL 1.0.2 which was already tested by the research, showed.. 
+We tested four TLS implementations. OpenSSL 1.0.2 which was already tested by the research, showed that we disagreed with the research about the nature of state 6. OpenSSL 1.1.0e proved to be a much more clean and simple TLS implementation than the older versions. BearSSL showed a clean state machine, but some state changes were not as expectex and server response was sometimes unreliable. Finally, GnuTLS was implemented well, but returned an internal server error on one occasion. All in all, no serious security bugs were found (alternative path to the authenticated state) and every latest version had the minimal number of states (6). Still, every version showed at least one non-compliant or strange state change. The addition of a state machine to the TLS protocol specification would therefore still be of great help.
 
 ## Notes
 * Windows 10 and Ubuntu 14.04 are used for this setup.
