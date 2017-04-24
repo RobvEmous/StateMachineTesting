@@ -10,20 +10,20 @@ After the installation and setup, we will show how to run different TLS servers 
 
 Download and install the following before starting:
 * Java SDK 1.8
+  * For Windows users, download it from the Oracle [website](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
   * For Linux users, install using apt-get or another package manager:
 ```
 $ sudo add-apt-repository ppa:webupd8team/java
 $ sudo apt-get update
 $ sudo apt-get install oracle-java8-installer
 ```
-  * For Windows users, download it from the Oracle [website](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 
 * Graphviz, which contains the `dot` utility for visualizing the learned models, you need the command line tools.
+  * For Windows users, download it from the [website](http://graphviz.org/download_windows.php). After installation, make sure to add a PATH environment variable pointing to the install location: `C:/Program Files (x86)/Graphviz2.38/bin`.
   * For Linux users, install using apt-get or another package manager:
 ```
 $ sudo apt-get install graphviz
 ```
-  * For Windows users, download it from the [website](http://graphviz.org/download_windows.php). After installation, make sure to add a PATH environment variable pointing to the install location: `C:/Program Files (x86)/Graphviz2.38/bin`.
 
 * Clone the [StateLearner](https://github.com/jderuiter/statelearner) repo and either follow the build instructions of that repo, or use an IDE like Eclipse:
   * `Import > Existing Maven Projects > [location of the StateLearner] > Finish`
@@ -152,7 +152,11 @@ As you can see, the graph contains 6 states, which is the right amount. The show
 * In state 0 to 4, the server accepts empty data packets, similar like OpenSSL 1.0.2 and BearSSL, while this should lead to state 2.
 
 ### Conclusions
-We tested four TLS implementations. OpenSSL 1.0.2 which was already tested by the research, showed that we disagreed with the research about the nature of state 6. OpenSSL 1.1.0e proved to be a much more clean and simple TLS implementation than the older versions. BearSSL showed a clean state machine, but some state changes were not as expectex and server response was sometimes unreliable. Finally, GnuTLS was implemented well, but returned an internal server error on one occasion. All in all, no serious security bugs were found (alternative path to the authenticated state) and every latest version had the minimal number of states (6). Still, every version showed at least one non-compliant or strange state change. The addition of a state machine to the TLS protocol specification would therefore still be of great help.
+We tested four TLS implementations. OpenSSL 1.0.2 which was already tested by the research, showed that we disagreed with the research about the nature of state 6. 
+OpenSSL 1.1.0e proved to be a much more clean and simple TLS implementation than the older versions. BearSSL showed a clean state machine, but some state changes were not as expectex and server response was sometimes unreliable. 
+Finally, GnuTLS was implemented well, but returned an internal server error on one occasion. 
+All in all, no serious security bugs were found (alternative path to the authenticated state) and every latest version had the minimal number of states (6). Still, every version showed at least one non-compliant or strange state change. 
+The addition of a state machine to the TLS protocol specification would therefore still be of great help.
 
 ## Notes
 * Windows 10 and Ubuntu 14.04 are used for this setup.
