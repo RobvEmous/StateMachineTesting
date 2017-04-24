@@ -31,7 +31,7 @@ $ sudo apt-get install graphviz
   * `Run As > Maven Install` (requires the use of a __JDK__ instead of a __JRE__)
 
 ## Setup
-You will first setup the state learner and then you can choose (one of) the different TLS implementation servers to use the learner on.
+You will first setup the state learner and then you can choose (one of) the different TLS implementation servers to use the learner on. The alphabeth of TLS messages, the client was allowed to sent, can be viewed by looking at the config.properties file in this repo. 
 
 ### Setup and run the State Learner
 * Locate the example properties file in `StateLearner/examples/configuration` and overwrite it with the properties file of this repo. You probably want to change a number of lines:
@@ -103,13 +103,11 @@ $ certtool --generate-self-signed --load-privkey x509-ca-key.pem --template ca.t
 $ gnutls-serv -p 10000 --http --x509cafile x509-ca.pem --x509keyfile x509-server-key.pem --x509certfile x509-server.pem
 ```
 
-### LibreTLS / WolfSSL / BoringSSL
-MAYBE TODO
-
 ## Results
 After setting up everything, the State Learner will try to build a state machine of the choosen TLS server implementation. This results in a `.dot` file and `.pdf` showing the hypotheses and final state machines. 
 The visualizations of these graphs are very large due to the large number of input and output types (the alphabet). For that reason, and because the mentioned research uses the same edge-reduction method, we merged equivalent state changes and labeled them 'Other' or 'All'.
-We included a state machine graph visualization for a number of specific TLS server implementations and will compare these to the research paper as well as to each other.
+We included a state machine graph visualization for a number of specific TLS server implementations and will compare these to the research paper as well as to each other. 
+Every TLS version is tested using the same properties file, but **only in GNuTLS we succesfully enabled the HeartBeat extension**.
 The main authentication path will be colored green and any seemingly strange or redundant states or edges are colored orange.
 
 ### OpenSSL 1.0.2
@@ -119,9 +117,9 @@ This research paper did not include the state machine of this TLS implementation
 As you can see, the state machine includes 7 states, just like in the research. State 0 to 4 are TLS handshake states, state 5 is the authenticated state and state 2 is the connection closed state. 
 Learning the state machine took about the same time as the research: 6 minutes. Some interesting findings include:
 * In state 0, when a ChangeCipherSpec, ApplicationData(Empty) or HeartbeatMessage(Empty) is sent, the connection will always be closed without responding with the appropriate alert 'Unexpected Message'.
-* In state 5, when a ChangeCipherSpec is sent, the server goes the seemingly redundant state 6 after which every message yields the alert 'Bad Record MAC' and server will go to state 2. This could indicate that in state 6, the server does not use the same MAC key/scheme as the client.  
+* In state 5, when a ChangeCipherSpec is sent, the server goes the seemingly redundant state 6 after which every message yields the alert 'Bad Record MAC' and server will go to state 2. This could indicate that in state 6, the server does not use the same MAC key/scheme as the client. Strangely, the research indicates that state 6 is only an additional error state like state 2, but as the server strill tries to check the MAC of messages in this state, we think this is not the case.
 * In state 5, when a ClientHello(DHE,RSA) is sent, the server returns the 'Handshake Failure' alert which would indicate that the sender was unable to negotiate an acceptable set of security parameters given the options available, but this is not the case: it is an alert 'Unexpected Message'.
-* In state 1 to 5, the server happily accepts empty data packets, but except for when in the authenticated state 5, this should lead to state 2.
+* In state 1 to 4, the server happily accepts empty data packets, but the server should not accept them and go to state 2.
 * The heartbeat requests are ignored in every state. This might be the solution of the software to the Heartbleed vulnerability.
 
 ### OpenSSL 1.1.0e
@@ -138,20 +136,23 @@ Learning took about 8 minutes. Some interesting findings compared to OpenSSL 1.0
 This implementation is relatively new and unknown as it is only 'Alpha' state software. That is why it is not tested in the research and proved to be quite difficult to get accurate results from which we will discuss later. 
 It is interesting, because on its website it promises to be a very simple and secure implementation of TLS. Below, the generated state machine is shown:
 ![BearSSL 0.4 state machine diagram](/graphs/BearSSL_0.4.png?raw=true "BearSSL 0.4 state machine diagram")
-As you can see, the graph contains 6 states. The shown test took about 18 minutes, but often it was still running after 5 hours, we will explain later later why this was the case. Some interesting findings are:
-TODO
+As you can see, the graph contains 6 states, which is the right amount. The shown test took about 18 minutes, but often it was still running after 5 hours. We will explain below why this happened. Some interesting findings are:
+* In state 0, a ClientHelloDHE message will always result in an alert 'Handshake Failure'. This is not normal behaviour. As this implementation is focussed on simplicity, dealing with this type of ClientHello messages may not be implemented.
+* In state 0 to 4, the server accepts empty data packets, similar like OpenSSL 1.0.2, while this should lead to state 2.
+* In state 0 to 5, it does not gracefully return an alert 'Unexpected Message' when it receives an unexpected message, but only closes the connection.
+* In state 5, when ApplicationData is sent, the server as expected returns some ApplicationData and a warning that it will close the connection. Strangely, it does not actually close the connection afterwards. This seems to be a bug in the implementation.
+* The great variation in runtime had to do with the fact that the server sometimes answered to a ClientHello(RSA) with a message of unknown content type -122. This could not be interpreted by the test suite (or us). As non deterministic behaviour is not allowed in these state machines, the test suite would endlessly try to create new state machines. This seems to be a second bug in the implementation. 
 
 ### GnuTLS 3.5.9
-This is the newest stable version of GnuTLS. The research also looked into GnuTLS, but these were much older versions (3.3.8 and 3.3.12). We will compare the results to these older versions. Below, the generated state machine is shown:
+This is the newest stable version of GnuTLS. The research also looked into GnuTLS, but these were older versions (3.3.8 and 3.3.12). We will compare the results to these older versions. Below, the generated state machine is shown:
 ![GnuTLS 3.5.9 state machine diagram](/graphs/GnuTLS_3.5.9.png?raw=true "GnuTLS 3.5.9 state machine diagram")
-As you can see, the graph contains 6 states. The shown test took about 7 minutes, which was much shorter than that of versions 3.3.8 (45 min) and about the same as version 3.3.12 (9 minutes). Some interesting findings are:
-TODO
-
-### LibreTLS / WolfSSL / BoringSSL
-MAYBE TODO
+As you can see, the graph contains 6 states, which is the right amount. The shown test took about 7 minutes, which was much shorter than that of version 3.3.8 (45 min) and similar to that of version 3.3.12 (9 minutes). Some interesting findings are:
+* In state 3, sending a ClientHello(DHE,RSA) message will result in an alert 'Internal Error' on the server side. This should never happen and is probably an implementation bug.   
+* In state 5, when a ClientHello(DHE,RSA) is sent, just like the two OpenSSL versions do, the server responds with an alert 'Handshake Failure' instead of an alert 'Unexpected Message'.
+* In state 0 to 4, the server accepts empty data packets, similar like OpenSSL 1.0.2 and BearSSL, while this should lead to state 2.
 
 ### Conclusions
-TODO
+We tested four TLS implementations. OpenSSL 1.0.2 which was already tested by the research, showed.. 
 
 ## Notes
 * Windows 10 and Ubuntu 14.04 are used for this setup.
