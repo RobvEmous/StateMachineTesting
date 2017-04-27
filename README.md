@@ -159,8 +159,10 @@ All in all, no serious security bugs were found (alternative path to the authent
 The addition of a state machine to the TLS protocol specification would therefore still be of great help.
 
 ## Notes
+* As no serious security bugs were found, we concluded that we were allowed to disclose these results. Please contact me if this assumption is wrong. 
 * Windows 10 and Ubuntu 14.04 are used for this setup.
 * TLS clients could also be tested using the StateLearner, but we will not go into that. 
 * The installation and setup of most TLS server implementations, especially the relatively unknown ones, proved to be quite a hassle. Therefore, despite the fact that the steps shown above worked for us, it is quite likely that you need some additional/alternative steps to get it working properly.
 * Installing different versions of an TLS implementation alongside is difficult to get working properly. That is why we removed one version before installing the other.
+
 
